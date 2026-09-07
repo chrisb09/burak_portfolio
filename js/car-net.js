@@ -66,6 +66,12 @@
     missBody: {
       de: 'Die GLB-Datei liegt noch nicht im Projekt (Upload-Limit 30&nbsp;MB).<br>Komprimiert unter <code>assets/amg-gt3.glb</code> ablegen &mdash; dann erscheint der Umriss hier.',
       en: 'The GLB file isn&rsquo;t in the project yet (30&nbsp;MB upload limit).<br>Drop a compressed version at <code>assets/amg-gt3.glb</code> &mdash; the outline will then appear here.'
+    },
+    // required attribution for the underlying 3D model (CC BY 4.0) — see
+    // https://sketchfab.com/3d-models/mercedes-benz-amg-gt3-red-bull-83c34fe5c0d64d838bc3c5e0f2d7f56a
+    modelCredit: {
+      de: '3D-Modell &bdquo;Mercedes-AMG GT3 Red&nbsp;Bull&ldquo; von <a href="https://sketchfab.com/3d-models/mercedes-benz-amg-gt3-red-bull-83c34fe5c0d64d838bc3c5e0f2d7f56a" target="_blank" rel="noopener">toddeppe</a> (Basis: Vecarz), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC&nbsp;BY&nbsp;4.0</a>',
+      en: '3D model &ldquo;Mercedes-AMG GT3 Red&nbsp;Bull&rdquo; by <a href="https://sketchfab.com/3d-models/mercedes-benz-amg-gt3-red-bull-83c34fe5c0d64d838bc3c5e0f2d7f56a" target="_blank" rel="noopener">toddeppe</a> (based on Vecarz), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC&nbsp;BY&nbsp;4.0</a>'
     }
   };
 
@@ -100,6 +106,16 @@
           button[aria-pressed="false"] { opacity:.42; }
           button:hover { color:var(--color-text, #e9e9ed); border-color:var(--color-neutral-700, #595d6c); }
           .sw { width:16px; height:2px; border-radius:2px; }
+          /* attribution line for the underlying 3D model — lives in the
+             same flex-wrap chips row as the layer toggles so it wraps
+             onto its own line on narrow boxes instead of overlapping
+             anything, rather than being separately positioned. */
+          .credit { display:inline-flex; align-items:center; padding:5px 2px;
+                    font-size:9px; letter-spacing:0.01em; text-transform:none;
+                    color:var(--color-neutral-600, #75798c); pointer-events:auto; }
+          .credit a { color:inherit; text-decoration:underline;
+                      text-decoration-color:color-mix(in oklab, var(--color-neutral-600, #75798c) 55%, transparent); }
+          .credit a:hover { color:var(--color-neutral-300, #cfd3e5); }
           .note { position:absolute; top:13px; right:15px; display:flex; flex-direction:column;
                   align-items:flex-end; gap:4px; padding:8px 14px 9px; border-radius:14px;
                   border:1px solid color-mix(in oklab, #ff2d46 46%, transparent);
@@ -393,6 +409,12 @@
         l._chipLbl = b2.querySelector('.lbl');
         chips.appendChild(b2);
       });
+      // required attribution for the underlying 3D model (CC BY 4.0)
+      const credit = document.createElement('span');
+      credit.className = 'credit';
+      credit.dataset.s = 'modelCredit';
+      credit.innerHTML = STRINGS.modelCredit.de;
+      chips.appendChild(credit);
       this._ecusRef = ECUS;
       this._layersRef = LAYERS;
       this._applyLang();
