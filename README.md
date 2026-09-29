@@ -35,3 +35,14 @@ python3 -m http.server 8000
 ```
 
 Then open `http://localhost:8000`.
+
+## Privacy / storage (no cookie banner)
+
+Theme (`bk-theme`) and language (`bk-lang`) are stored in `localStorage`
+only — first-party, functional, never sent to a server. No tracking
+cookies are set by this site, so no consent banner is required.
+
+Note: the page loads third-party CDN assets (Google Fonts, three.js via
+esm.sh, MapLibre, OpenFreeMap tiles, GitHub contributions API). Those
+providers may log requests under their own policies; self-hosting them
+would be a separate follow-up if stricter privacy is desired.
