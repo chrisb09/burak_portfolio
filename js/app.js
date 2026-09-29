@@ -71,9 +71,14 @@
     window.scrollTo(0, 0);
   }
 
-  function setLang(lang) {
+  function setLang(lang, opts) {
     state.lang = lang;
     document.documentElement.setAttribute("lang", lang);
+    if (!opts || opts.persist !== false) {
+      try {
+        localStorage.setItem("bk-lang", lang);
+      } catch (e) {}
+    }
     langButtons.forEach((btn) => {
       btn.setAttribute("data-active", String(btn.dataset.langBtn === lang));
     });
@@ -148,6 +153,17 @@
       if (typeof mq.addEventListener === "function") mq.addEventListener("change", onChange);
       else if (typeof mq.addListener === "function") mq.addListener(onChange);
     }
+  }
+  // Stored choice (bk-lang) wins; otherwise use the browser locale.
+  // Only German gets German — everything else falls back to English,
+  // so e.g. "en-US", "fr" or "tr" all land on English.
+  function detectLang() {
+    try {
+      const stored = localStorage.getItem("bk-lang");
+      if (stored === "de" || stored === "en") return stored;
+    } catch (e) {}
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "de";
+    return String(nav).toLowerCase().startsWith("de") ? "de" : "en";
   }
 
   function setScenario(scenario) {
@@ -279,6 +295,6 @@
 
   setView(state.view);
   initTheme();
-  setLang(state.lang);
+  setLang(detectLang(), { persist: false });
   setScenario(state.scenario);
 })();
