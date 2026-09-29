@@ -214,6 +214,8 @@
         vertexColors: true, side: THREE.DoubleSide, transparent: true, opacity: 0.93
       }));
       surface.name = 'prr-surface';
+      // vertices morph on scenario change, so cached bounds go stale
+      surface.frustumCulled = false;
       scene.add(surface);
 
       // mesh lines following the same vertices
@@ -228,6 +230,7 @@
         color: isLight ? 0xffffff : 0x0d1014, transparent: true, opacity: 0.4
       }));
       mesh.renderOrder = 2;
+      mesh.frustumCulled = false;
       scene.add(mesh);
 
       // --- frame: floor grid + back walls ----------------------------------

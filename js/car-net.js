@@ -363,10 +363,16 @@
           const shell = new THREE.Mesh(g, shellMat);
           shell.name = 'shell';
           shell.applyMatrix4(o.matrixWorld);
+          // Transformed after creation, so the cached bounding sphere is
+          // stale and frustum culling would wrongly discard parts while
+          // orbiting (visible as chunks loading/unloading, worse with the
+          // transparent shell). The whole car is always on screen anyway.
+          shell.frustumCulled = false;
           groups.body.add(shell);
           const e = new THREE.LineSegments(new THREE.EdgesGeometry(g, 24), edgeMat);
           e.name = 'edges';
           e.applyMatrix4(o.matrixWorld);
+          e.frustumCulled = false;
           groups.body.add(e);
         });
       } catch (err) {
@@ -411,6 +417,8 @@
         );
         node.name = 'ecu-' + e.id;
         node.position.copy(pos);
+        // tiny markers: cheaper to always draw than to cull per-frame
+        node.frustumCulled = false;
         g.add(node);
 
         const core = new THREE.Mesh(
@@ -422,6 +430,7 @@
         this._mats.bus[e.bus].push(core.material);
         core.renderOrder = 4;
         core.position.copy(pos);
+        core.frustumCulled = false;
         g.add(core);
         e._core = core;
         e._node = node;
@@ -438,6 +447,8 @@
             lineMat
           );
           line.name = 'bus-' + e.id;
+          // spans much of the car; stale bounds would pop it while orbiting
+          line.frustumCulled = false;
           g.add(line);
 
           const pMat = xray(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.95 }));
@@ -450,6 +461,8 @@
           );
           p.name = 'pulse-' + e.id;
           p.renderOrder = 5;
+          // travels along the curve, so a static bounding sphere is wrong
+          p.frustumCulled = false;
           g.add(p);
           pulses.push({ mesh: p, curve, offset: i * 0.17, speed: 0.2 + (i % 3) * 0.035 });
         }
