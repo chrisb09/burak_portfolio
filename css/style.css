@@ -418,17 +418,21 @@
   background: color-mix(in oklab, var(--color-neutral-800) 16%, transparent);
 }
 
-/* -- projekte: project cards -- */
+/* -- projekte: project cards --
+   No lift on hover (translateY shifts text and feels jittery while reading).
+   Highlight with border + shadow instead, so the card stays put. */
 .proj-card {
   border: 1px solid var(--color-neutral-800);
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: color-mix(in oklab, var(--color-neutral-800) 26%, transparent);
   box-shadow: var(--shadow-md);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .proj-card:hover {
-  transform: translateY(-4px);
+  transform: none;
+  border-color: color-mix(in oklab, var(--color-signal, #39ff8f) 45%, var(--color-neutral-800));
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-signal, #39ff8f) 35%, transparent), var(--shadow-lg);
 }
 /* -- projekte: label/body rows (Ziel/Goal, Deutung/Interpretation) --
    Fixed-width labels (52px/72px inline) overflowed for long EN strings
