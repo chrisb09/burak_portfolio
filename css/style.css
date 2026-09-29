@@ -192,7 +192,7 @@
   position: relative;
   text-decoration: none;
   background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
-  box-shadow: 0 0 10px 1px color-mix(in oklab, #39ff8f 35%, transparent);
+  box-shadow: 0 0 10px 1px color-mix(in oklab, var(--color-signal) 35%, transparent);
 }
 /* neon ring as an overlay: an inset box-shadow paints below the photo,
    so it was hidden behind opaque pixels — ::after sits above the img */
@@ -201,7 +201,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid color-mix(in oklab, #39ff8f 80%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-signal) 80%, transparent);
   pointer-events: none;
 }
 .nav-avatar img {
@@ -352,13 +352,60 @@
   justify-content: center;
   box-sizing: border-box;
   background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, #39ff8f 80%, transparent),
-    0 0 10px 1px color-mix(in oklab, #39ff8f 35%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-signal) 80%, transparent),
+    0 0 10px 1px color-mix(in oklab, var(--color-signal) 35%, transparent);
   transition: box-shadow 0.2s ease;
 }
 .nav-gh:hover {
-  box-shadow: 0 0 0 2px #39ff8f;
+  box-shadow: 0 0 0 2px var(--color-signal);
   text-decoration: none;
+}
+/* theme toggle (dark/light), same circular treatment as .nav-gh */
+.theme-toggle {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  color: var(--color-signal, var(--color-signal));
+  background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-signal, var(--color-signal)) 80%, transparent),
+    0 0 10px 1px color-mix(in oklab, var(--color-signal, var(--color-signal)) 35%, transparent);
+  transition: box-shadow 0.2s ease, color 0.2s ease;
+}
+.theme-toggle:hover {
+  box-shadow: 0 0 0 2px var(--color-signal, var(--color-signal));
+}
+.theme-toggle svg {
+  display: block;
+}
+.theme-toggle .icon-sun {
+  display: none;
+}
+.theme-toggle .icon-moon {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle .icon-sun {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle .icon-moon {
+  display: none;
+}
+/* white-only employer logos (…-w.png) are invisible on light backgrounds */
+:root[data-theme="light"] img[src$="-w.png"] {
+  filter: invert(0.92) hue-rotate(180deg);
+}
+/* viz containers use the theme-aware surface instead of hardcoded dark */
+.car-media,
+.thesis-map,
+.thesis-fig {
+  background: var(--viz-bg);
 }
 
 /* -- page views --
@@ -397,20 +444,20 @@
   text-decoration: none;
 }
 .home-cta-primary {
-  background: #39ff8f;
-  color: #0d1014;
+  background: var(--color-signal);
+  color: var(--color-signal-ink, #0d1014);
   font-weight: 600;
 }
 .home-cta-primary:hover {
-  background: #5cffa4;
-  color: #0d1014;
+  background: color-mix(in oklab, var(--color-signal) 82%, white);
+  color: var(--color-signal-ink, #0d1014);
 }
 .home-cta-ghost {
   border: 1px solid var(--color-neutral-700);
   color: var(--color-text);
 }
 .home-cta-ghost:hover {
-  border-color: #39ff8f;
+  border-color: var(--color-signal);
   color: var(--color-text);
 }
 
@@ -516,8 +563,8 @@
 }
 .contact-card:hover {
   transform: translateY(-3px);
-  border-color: color-mix(in oklab, #39ff8f 55%, var(--color-neutral-800));
-  box-shadow: 0 0 0 1px color-mix(in oklab, #39ff8f 40%, transparent), var(--shadow-lg);
+  border-color: color-mix(in oklab, var(--color-signal) 55%, var(--color-neutral-800));
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-signal) 40%, transparent), var(--shadow-lg);
   text-decoration: none;
   color: var(--color-text);
 }
@@ -531,11 +578,11 @@
   justify-content: center;
   box-sizing: border-box;
   background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, #39ff8f 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-signal) 55%, transparent);
   transition: box-shadow 0.22s ease;
 }
 .contact-card:hover .contact-card-icon {
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, #39ff8f 85%, transparent), 0 0 12px 1px color-mix(in oklab, #39ff8f 40%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-signal) 85%, transparent), 0 0 12px 1px color-mix(in oklab, var(--color-signal) 40%, transparent);
 }
 .contact-card-body {
   display: flex;
@@ -572,16 +619,16 @@
 }
 .contact-card:hover .contact-card-arrow {
   transform: translate(2px, -2px);
-  color: #39ff8f;
+  color: var(--color-signal);
 }
 .contact-card-copy-icon svg {
   display: block;
 }
 .contact-card[data-copied="true"] .contact-card-sub {
-  color: #39ff8f;
+  color: var(--color-signal);
 }
 .contact-card[data-copied="true"] .contact-card-arrow {
-  color: #39ff8f;
+  color: var(--color-signal);
   transform: none;
 }
 @keyframes contact-copied-pulse {
@@ -613,9 +660,9 @@
   border-color: var(--color-neutral-700);
 }
 .scen-chip[data-active="true"] {
-  background: #39ff8f;
-  border-color: #39ff8f;
-  color: #0d1014;
+  background: var(--color-signal);
+  border-color: var(--color-signal);
+  color: var(--color-signal-ink, #0d1014);
   font-weight: 600;
 }
 .scen-cap {

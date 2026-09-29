@@ -8,12 +8,15 @@
     view: "home", // "home" | "werdegang" | "projekte" | "kontakt" | "aktivitaet"
     lang: "de", // "de" | "en"
     scenario: "Melaten", // "Melaten" | "Aachen" | "Jackerath"
+    theme: "dark", // "dark" | "light"
   };
 
   const introOverlay = document.querySelector(".intro-overlay");
   const views = document.querySelectorAll(".view");
   const navLinks = document.querySelectorAll("[data-view-link]");
   const langButtons = document.querySelectorAll("[data-lang-btn]");
+  const themeToggle = document.querySelector("[data-theme-toggle]");
+  const metaThemeColor = document.querySelector("#meta-theme-color");
   const scenarioChips = document.querySelectorAll("[data-set-scenario]");
   const scenarioCaptions = document.querySelectorAll("[data-scenario-caption]");
   const scenarioElements = document.querySelectorAll("scenario-map, prr-surface");
@@ -34,7 +37,7 @@
   const altNodes = document.querySelectorAll("[data-en-alt]");
   const ariaNodes = document.querySelectorAll("[data-en-aria-label]");
   const translatableElements = document.querySelectorAll(
-    "car-net, scenario-map, github-contrib, prr-surface"
+    "car-net, scenario-map, github-contrib, prr-surface, particle-net"
   );
 
   textNodes.forEach((el) => {
@@ -91,6 +94,60 @@
     translatableElements.forEach((el) => {
       if (typeof el.setLang === "function") el.setLang(lang);
     });
+  }
+
+  // -- theme (dark/light) --
+  // Stored in localStorage (bk-theme), so no cookie banner is needed.
+  // Stored choice wins; otherwise the OS prefers-color-scheme is used.
+  const THEME_KEY = "bk-theme";
+  function getStoredTheme() {
+    try {
+      const t = localStorage.getItem(THEME_KEY);
+      return t === "light" || t === "dark" ? t : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function getPreferredTheme() {
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+      return "light";
+    }
+    return "dark";
+  }
+  function applyThemeToDom(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", theme === "light" ? "#f2f3f8" : "#161826");
+    }
+    if (themeToggle) {
+      themeToggle.setAttribute("aria-pressed", String(theme === "light"));
+    }
+  }
+  function setTheme(theme, opts) {
+    state.theme = theme;
+    applyThemeToDom(theme);
+    if (!opts || opts.persist !== false) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (e) {}
+    }
+    translatableElements.forEach((el) => {
+      if (typeof el.setTheme === "function") el.setTheme(theme);
+    });
+    window.dispatchEvent(new CustomEvent("themechange", { detail: { theme } }));
+  }
+  function initTheme() {
+    const stored = getStoredTheme();
+    setTheme(stored || getPreferredTheme(), { persist: false });
+    // Follow OS changes only while the user has not chosen manually.
+    if (window.matchMedia) {
+      const mq = window.matchMedia("(prefers-color-scheme: light)");
+      const onChange = (e) => {
+        if (!getStoredTheme()) setTheme(e.matches ? "light" : "dark", { persist: false });
+      };
+      if (typeof mq.addEventListener === "function") mq.addEventListener("change", onChange);
+      else if (typeof mq.addListener === "function") mq.addListener(onChange);
+    }
   }
 
   function setScenario(scenario) {
@@ -174,6 +231,13 @@
       return;
     }
 
+    const themeTarget = event.target.closest("[data-theme-toggle]");
+    if (themeTarget) {
+      event.preventDefault();
+      setTheme(state.theme === "light" ? "dark" : "light");
+      return;
+    }
+
     const scenarioTarget = event.target.closest("[data-set-scenario]");
     if (scenarioTarget) {
       event.preventDefault();
@@ -214,6 +278,7 @@
   }
 
   setView(state.view);
+  initTheme();
   setLang(state.lang);
   setScenario(state.scenario);
 })();

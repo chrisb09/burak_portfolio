@@ -5,11 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Burak Kayabasi — Portfolio</title>
 <meta name="description" content="Portfolio von Burak Kayabasi, Masterstudent Informatik an der RWTH Aachen mit Schwerpunkt KI, Data Science und Embedded Systems.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#161826" id="meta-theme-color">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161826'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='16' font-weight='700' text-anchor='middle' fill='%2339ff8f'%3EB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/style.css">
+<script>
+  // Early theme boot (before paint): stored choice wins, otherwise OS preference.
+  // Stored in localStorage (bk-theme), so no cookie banner is needed.
+  try {
+    var t = localStorage.getItem('bk-theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+    var m = document.getElementById('meta-theme-color');
+    if (m) m.setAttribute('content', t === 'light' ? '#f2f3f8' : '#161826');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+</script>
 </head>
 <body>
 
@@ -20,11 +37,11 @@
   </div>
   <div class="intro-content">
     <svg class="intro-cup" width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-      <path class="intro-steam intro-steam-1" d="M24 4c-3 4 3 5 0 9" stroke="#39ff8f" stroke-width="2" stroke-linecap="round"/>
-      <path class="intro-steam intro-steam-2" d="M32 2c-3 4 3 5 0 9" stroke="#39ff8f" stroke-width="2" stroke-linecap="round"/>
-      <path class="intro-steam intro-steam-3" d="M40 4c-3 4 3 5 0 9" stroke="#39ff8f" stroke-width="2" stroke-linecap="round"/>
+      <path class="intro-steam intro-steam-1" d="M24 4c-3 4 3 5 0 9" stroke="var(--color-signal)" stroke-width="2" stroke-linecap="round"/>
+      <path class="intro-steam intro-steam-2" d="M32 2c-3 4 3 5 0 9" stroke="var(--color-signal)" stroke-width="2" stroke-linecap="round"/>
+      <path class="intro-steam intro-steam-3" d="M40 4c-3 4 3 5 0 9" stroke="var(--color-signal)" stroke-width="2" stroke-linecap="round"/>
       <path d="M14 24h30v16a10 10 0 0 1-10 10H24a10 10 0 0 1-10-10V24z" fill="var(--color-neutral-900)" stroke="var(--color-accent-400)" stroke-width="1.6"/>
-      <path class="intro-cup-fill" d="M16.4 26.4h25.2v13.6a7.6 7.6 0 0 1-7.6 7.6h-10a7.6 7.6 0 0 1-7.6-7.6V26.4z" fill="#39ff8f"/>
+      <path class="intro-cup-fill" d="M16.4 26.4h25.2v13.6a7.6 7.6 0 0 1-7.6 7.6h-10a7.6 7.6 0 0 1-7.6-7.6V26.4z" fill="var(--color-signal)"/>
       <path d="M44 28c4.4 0 8 3.1 8 7s-3.6 7-8 7" stroke="var(--color-accent-400)" stroke-width="1.6" stroke-linecap="round"/>
     </svg>
     <div class="intro-name">Burak Kayabasi</div>
@@ -56,12 +73,16 @@
           <a href="#" data-nav="aktivitaet" class="nav-link" data-view-link="aktivitaet" data-en="Activity">Aktivität</a>
         </div>
         <div class="nav-actions">
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Farbschema wechseln" data-en-aria-label="Toggle color scheme">
+            <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          </button>
           <div class="nav-lang-group">
             <a href="#" data-lang-btn="de" class="nav-lang">DE</a>
             <a href="#" data-lang-btn="en" class="nav-lang">EN</a>
           </div>
           <a href="https://github.com/Burakayabasi" target="_blank" rel="noopener" class="nav-gh" aria-label="GitHub-Profil öffnen" data-en-aria-label="Open GitHub profile">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="#39ff8f" style="display:block;">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="var(--color-signal)" style="display:block;">
               <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
             </svg>
           </a>
@@ -77,7 +98,7 @@
       <div style="position:relative; z-index:2; max-width:1000px; width:100%; margin:0 auto; padding:0 var(--space-6); box-sizing:border-box; text-align:center;">
         <div style="display:inline-flex; align-items:center; justify-content:center; gap:10px; margin-bottom:var(--space-6); color:var(--color-neutral-300); font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase; line-height:1;">
           <span style="display:block;">Aachen</span>
-          <span style="display:block; width:9px; height:9px; background:#39ff8f; border-radius:2px; box-shadow:0 0 9px 2px rgba(57,255,143,0.5);"></span>
+          <span style="display:block; width:9px; height:9px; background:var(--color-signal); border-radius:2px; box-shadow:0 0 9px 2px rgba(57,255,143,0.5);"></span>
         </div>
         <h1 style="font-family:var(--font-heading); font-weight:700; font-size:clamp(2.1rem,6vw,4.1rem); line-height:1.08; letter-spacing:-0.03em; margin:0 auto; color:var(--color-text); max-width:20ch; text-wrap:balance;">
           Burak <span style="display:inline-block; background:var(--color-text); color:var(--color-bg); padding:0 0.22em; border-radius:4px;">Kayabasi</span><br><span style="color:var(--color-neutral-300);">AI · Data Science · <span style="display:inline-block; background:var(--color-text); color:var(--color-bg); padding:0 0.22em; border-radius:4px;">Embedded</span></span>
@@ -117,11 +138,11 @@
       <div style="display:flex; flex-direction:column; margin-bottom:calc(var(--space-8) * 1.1); border-bottom:1px solid color-mix(in oklab, var(--color-neutral-800) 78%, transparent);">
         <div class="tl-row">
           <div style="padding-top:25px; padding-right:var(--space-6); padding-bottom:calc(var(--space-6) * 1.25); padding-left:0; text-align:right;">
-            <div style="font-family:var(--font-heading); font-weight:600; font-size:0.8rem; letter-spacing:0.02em; color:#39ff8f;" data-en="present">heute</div>
+            <div style="font-family:var(--font-heading); font-weight:600; font-size:0.8rem; letter-spacing:0.02em; color:var(--color-signal);" data-en="present">heute</div>
             <div style="font-size:0.74rem; color:var(--color-neutral-500); font-variant-numeric:tabular-nums; margin-top:3px;" data-en="since 10/2024">seit 10/2024</div>
             <div class="tl-loc" style="margin-top:9px; font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-neutral-600);">Aachen</div>
           </div>
-          <div style="position:relative; align-self:stretch; justify-self:center; width:2px; border-radius:1px; background:linear-gradient(180deg, transparent 0, transparent 29px, var(--color-accent-600) 29px, color-mix(in oklab, var(--color-accent-600) 30%, transparent) 100%);"><span style="position:absolute; left:50%; top:29px; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:#39ff8f; box-shadow:0 0 0 4px color-mix(in oklab, #39ff8f 13%, transparent), 0 0 14px 3px color-mix(in oklab, #39ff8f 42%, transparent);"></span></div>
+          <div style="position:relative; align-self:stretch; justify-self:center; width:2px; border-radius:1px; background:linear-gradient(180deg, transparent 0, transparent 29px, var(--color-accent-600) 29px, color-mix(in oklab, var(--color-accent-600) 30%, transparent) 100%);"><span style="position:absolute; left:50%; top:29px; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--color-signal); box-shadow:0 0 0 4px color-mix(in oklab, var(--color-signal) 13%, transparent), 0 0 14px 3px color-mix(in oklab, var(--color-signal) 42%, transparent);"></span></div>
           <div style="padding:calc(var(--space-6) * 1.25) 0 calc(var(--space-6) * 1.4) var(--space-6); min-width:0;">
             <div style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap; margin-bottom:var(--space-4);">
               <span style="display:inline-flex; align-items:center; justify-content:center; height:28px; padding:0 10px; flex-shrink:0; box-sizing:border-box; border:1px solid var(--color-neutral-800); border-radius:7px; background:color-mix(in oklab, var(--color-neutral-900) 60%, transparent);"><img src="assets/logos/fev-w.png" alt="FEV" style="display:block; max-height:16px; max-width:72px; width:auto; height:auto; object-fit:contain; opacity:0.92;"></span>
@@ -189,11 +210,11 @@
       <div style="display:flex; flex-direction:column; margin-bottom:calc(var(--space-8) * 1.1); border-bottom:1px solid color-mix(in oklab, var(--color-neutral-800) 78%, transparent);">
         <div class="tl-row">
           <div style="padding-top:25px; padding-right:var(--space-6); padding-bottom:calc(var(--space-6) * 1.25); padding-left:0; text-align:right;">
-            <div style="font-family:var(--font-heading); font-weight:600; font-size:0.8rem; letter-spacing:0.02em; color:#39ff8f;" data-en="present">heute</div>
+            <div style="font-family:var(--font-heading); font-weight:600; font-size:0.8rem; letter-spacing:0.02em; color:var(--color-signal);" data-en="present">heute</div>
             <div style="font-size:0.74rem; color:var(--color-neutral-500); font-variant-numeric:tabular-nums; margin-top:3px;" data-en="since 10/2023">seit 10/2023</div>
             <div class="tl-loc" style="margin-top:9px; font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-neutral-600);">Aachen</div>
           </div>
-          <div style="position:relative; align-self:stretch; justify-self:center; width:2px; border-radius:1px; background:linear-gradient(180deg, transparent 0, transparent 29px, var(--color-accent-600) 29px, color-mix(in oklab, var(--color-accent-600) 30%, transparent) 100%);"><span style="position:absolute; left:50%; top:29px; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:#39ff8f; box-shadow:0 0 0 4px color-mix(in oklab, #39ff8f 13%, transparent), 0 0 14px 3px color-mix(in oklab, #39ff8f 42%, transparent);"></span></div>
+          <div style="position:relative; align-self:stretch; justify-self:center; width:2px; border-radius:1px; background:linear-gradient(180deg, transparent 0, transparent 29px, var(--color-accent-600) 29px, color-mix(in oklab, var(--color-accent-600) 30%, transparent) 100%);"><span style="position:absolute; left:50%; top:29px; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:var(--color-signal); box-shadow:0 0 0 4px color-mix(in oklab, var(--color-signal) 13%, transparent), 0 0 14px 3px color-mix(in oklab, var(--color-signal) 42%, transparent);"></span></div>
           <div style="padding:calc(var(--space-6) * 1.25) 0 calc(var(--space-6) * 1.4) var(--space-6); min-width:0;">
             <div style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap; margin-bottom:var(--space-4);">
               <span style="display:inline-flex; align-items:center; justify-content:center; height:28px; padding:0 10px; flex-shrink:0; box-sizing:border-box; border:1px solid var(--color-neutral-800); border-radius:7px; background:color-mix(in oklab, var(--color-neutral-900) 60%, transparent);"><img src="assets/logos/rwth-w.png" alt="RWTH Aachen University" style="display:block; max-height:15px; max-width:72px; width:auto; height:auto; object-fit:contain; opacity:0.92;"></span>
@@ -358,7 +379,7 @@
             <span style="color:var(--color-neutral-400); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;">Mercedes-AMG GmbH</span>
           </div>
           <div class="proj-card">
-            <div class="car-media" style="position:relative; width:100%; aspect-ratio:16/9; background:radial-gradient(ellipse 70% 70% at 45% 45%, #14171f 0%, #0e1018 100%); border-bottom:1px solid var(--color-neutral-800);">
+            <div class="car-media" style="position:relative; width:100%; aspect-ratio:16/9; background:radial-gradient(ellipse 70% 70% at 45% 45%, color-mix(in oklab, var(--viz-bg) 60%, var(--color-bg)) 0%, var(--viz-bg) 100%); border-bottom:1px solid var(--color-neutral-800);">
               <car-net style="position:absolute; inset:0;"></car-net>
             </div>
             <div style="padding:calc(var(--space-4) * 1.4);">
@@ -385,7 +406,7 @@
             <span style="color:var(--color-neutral-400); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;">FEV Vehicle GmbH</span>
           </div>
           <div class="proj-card">
-            <div style="position:relative; width:100%; aspect-ratio:16/9; background:#0f1118; border-bottom:1px solid var(--color-neutral-800); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--space-4); overflow:hidden;">
+            <div style="position:relative; width:100%; aspect-ratio:16/9; background:var(--viz-bg); border-bottom:1px solid var(--color-neutral-800); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--space-4); overflow:hidden;">
               <div style="position:absolute; inset:0; opacity:0.5; background-image:repeating-linear-gradient(115deg, transparent 0 22px, color-mix(in oklab, var(--color-neutral-800) 55%, transparent) 22px 23px);"></div>
               <span style="position:relative; font-family:var(--font-heading); font-weight:700; font-size:clamp(1.6rem,4.4vw,2.9rem); letter-spacing:-0.02em; line-height:1; background:var(--color-text); color:var(--color-bg); padding:0.1em 0.24em; border-radius:5px;">Censored</span>
               <span style="position:relative; color:var(--color-neutral-400); font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase;" data-en="Placeholder to follow">Platzhalter folgt</span>
@@ -423,7 +444,7 @@
               </div>
             </div>
             <div class="thesis-media" style="border-bottom:1px solid var(--color-neutral-800);">
-              <figure class="thesis-map" style="margin:0; position:relative; background:#0f1118; display:flex; flex-direction:column; min-width:0;">
+              <figure class="thesis-map" style="margin:0; position:relative; background:var(--viz-bg); display:flex; flex-direction:column; min-width:0;">
                 <div style="position:relative; flex:1; min-height:330px; overflow:hidden;">
                   <scenario-map scenario="Melaten" style="position:absolute; inset:0;"></scenario-map>
                 </div>
@@ -434,15 +455,15 @@
                   <span class="scen-cap" data-scenario-caption="Jackerath" data-en="Jackerath motorway junction">Autobahnkreuz Jackerath</span>
                 </figcaption>
               </figure>
-              <figure style="margin:0; position:relative; background:#0f1118; display:flex; flex-direction:column; min-width:0; border-left:1px solid var(--color-neutral-800);">
+              <figure style="margin:0; position:relative; background:var(--viz-bg); display:flex; flex-direction:column; min-width:0; border-left:1px solid var(--color-neutral-800);">
                 <div style="position:relative;">
                   <prr-surface scenario="Melaten" style="width:100%; aspect-ratio:16/11;"></prr-surface>
-                  <div style="position:absolute; top:13px; right:15px; display:flex; flex-direction:column; align-items:flex-end; gap:4px; padding:8px 14px 9px; border-radius:14px; border:1px solid color-mix(in oklab, #39ff8f 46%, transparent); background:color-mix(in oklab, #071a10 78%, transparent); backdrop-filter:blur(6px); pointer-events:none; text-align:right; max-width:calc(100% - 30px);">
+                  <div style="position:absolute; top:13px; right:15px; display:flex; flex-direction:column; align-items:flex-end; gap:4px; padding:8px 14px 9px; border-radius:14px; border:1px solid color-mix(in oklab, var(--color-signal) 46%, transparent); background:color-mix(in oklab, var(--color-bg) 82%, var(--color-signal) 18%); backdrop-filter:blur(6px); pointer-events:none; text-align:right; max-width:calc(100% - 30px);">
                     <span style="display:flex; align-items:center; gap:8px; line-height:1;">
-                      <span style="flex-shrink:0; width:14px; height:14px; border-radius:50%; box-sizing:border-box; display:flex; align-items:center; justify-content:center; padding-top:1px; font-family:var(--font-heading); font-size:10px; font-weight:700; line-height:1; color:#39ff8f; border:1px solid color-mix(in oklab, #39ff8f 70%, transparent); box-shadow:0 0 8px 1px color-mix(in oklab, #39ff8f 28%, transparent);">!</span>
-                      <span style="font-family:var(--font-heading); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:#39ff8f; line-height:1;" data-en="Real Data">Reale Daten</span>
+                      <span style="flex-shrink:0; width:14px; height:14px; border-radius:50%; box-sizing:border-box; display:flex; align-items:center; justify-content:center; padding-top:1px; font-family:var(--font-heading); font-size:10px; font-weight:700; line-height:1; color:var(--color-signal); border:1px solid color-mix(in oklab, var(--color-signal) 70%, transparent); box-shadow:0 0 8px 1px color-mix(in oklab, var(--color-signal) 28%, transparent);">!</span>
+                      <span style="font-family:var(--font-heading); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--color-signal); line-height:1;" data-en="Real Data">Reale Daten</span>
                     </span>
-                    <span style="font-family:var(--font-heading); font-size:0.6rem; letter-spacing:0.02em; line-height:1.5; color:#9fe9c0;" data-en="Partial results from the thesis">Teilergebnisse der Thesis</span>
+                    <span style="font-family:var(--font-heading); font-size:0.6rem; letter-spacing:0.02em; line-height:1.5; color:var(--color-signal);" data-en="Partial results from the thesis">Teilergebnisse der Thesis</span>
                   </div>
                 </div>
                 <figcaption style="flex:1; padding:var(--space-4) calc(var(--space-4) * 1.2); border-top:1px solid var(--color-neutral-800); color:var(--color-neutral-200); font-size:0.78rem; letter-spacing:0.02em;">
@@ -490,7 +511,7 @@
       <div style="display:flex; flex-wrap:wrap; gap:var(--space-4);">
         <a href="https://www.linkedin.com/in/burak-kayabasi-420949265" target="_blank" rel="noopener" class="contact-card" aria-label="LinkedIn-Profil öffnen" data-en-aria-label="Open LinkedIn profile">
           <span class="contact-card-icon" aria-hidden="true">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="#39ff8f"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.11 20.45H3.56V9h3.55v11.45z"></path></svg>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="var(--color-signal)"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.11 20.45H3.56V9h3.55v11.45z"></path></svg>
           </span>
           <span class="contact-card-body">
             <span class="contact-card-title">LinkedIn</span>
@@ -500,7 +521,7 @@
         </a>
         <button type="button" class="contact-card" data-copy-email="kayabasi.burak@outlook.de" aria-label="E-Mail-Adresse kopieren" data-en-aria-label="Copy email address">
           <span class="contact-card-icon" aria-hidden="true">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#39ff8f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h17v13h-17z"></path><path d="M4 6.2l8 6.4 8-6.4"></path></svg>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--color-signal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h17v13h-17z"></path><path d="M4 6.2l8 6.4 8-6.4"></path></svg>
           </span>
           <span class="contact-card-body">
             <span class="contact-card-title" data-en="Email">E-Mail</span>

@@ -7,8 +7,20 @@ class ParticleNet extends HTMLElement {
     canvas.style.cssText = 'display:block; width:100%; height:100%;';
     this.appendChild(canvas);
     const ctx = canvas.getContext('2d', { alpha: true });
-    const dotColor = this.getAttribute('dot-color') || 'rgba(180,170,235,0.85)';
-    const lineColor = this.getAttribute('line-color') || '145,132,217';
+    const THEMES = {
+      dark: { dot: 'rgba(180,170,235,0.85)', line: '145,132,217' },
+      light: { dot: 'rgba(90,92,140,0.85)', line: '106,95,208' },
+    };
+    const initialTheme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'light' : 'dark';
+    this._theme = initialTheme;
+    let dotColor = this.getAttribute('dot-color') || THEMES[initialTheme].dot;
+    let lineColor = this.getAttribute('line-color') || THEMES[initialTheme].line;
+    // Allow app.js to switch themes live; explicit attributes win only on first paint.
+    this.setTheme = (theme) => {
+      this._theme = theme;
+      if (!this.hasAttribute('dot-color')) dotColor = THEMES[theme] ? THEMES[theme].dot : THEMES.dark.dot;
+      if (!this.hasAttribute('line-color')) lineColor = THEMES[theme] ? THEMES[theme].line : THEMES.dark.line;
+    };
     const linkDist = parseFloat(this.getAttribute('link-distance') || '150');
     const density = parseFloat(this.getAttribute('density') || '5500');
     const BUCKETS = 4;

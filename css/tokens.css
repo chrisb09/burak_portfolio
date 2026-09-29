@@ -1,7 +1,8 @@
 /* Design tokens: colors, type, spacing and shadows shared by the whole site.
    Everything below is plain CSS custom properties — no build step needed. */
 
-:root {
+:root,
+:root[data-theme="dark"] {
   /* tells the browser this page is intentionally dark, so native form
      controls (buttons, focus rings, scrollbars) pick dark-appropriate
      system styling instead of the browser's own default light theme */
@@ -12,6 +13,11 @@
   --color-surface: #232532;
   --color-text: #e9e9ed;
   --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  /* -- signal (neon green) — brand accent kept on both themes -- */
+  --color-signal: #39ff8f;
+  --color-signal-strong: #39ff8f;
+  --color-signal-ink: #0d1014;
 
   /* -- accent (blurple) -- */
   --color-accent: #9184d9;
@@ -61,6 +67,55 @@
   --shadow-sm: 0 0 0 1px #3f424d;
   --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
+
+  /* -- viz surfaces (thesis map / 3D cards) -- */
+  --viz-bg: #0f1118;
+}
+
+/* -- light theme: same variable names, light-appropriate values --
+   Toggled via documentElement.dataset.theme ("dark" | "light").
+   Auto-detect uses prefers-color-scheme; the choice is persisted in
+   localStorage (bk-theme) so no cookie banner is needed. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #f2f3f8;
+  --color-surface: #ffffff;
+  --color-text: #171926;
+  --color-divider: color-mix(in srgb, #171926 14%, transparent);
+
+  /* darker green for contrast on white (neon #39ff8f is unreadable on light) */
+  --color-signal: #0b9b52;
+  --color-signal-strong: #0b9b52;
+  --color-signal-ink: #ffffff;
+
+  --color-accent: #6a5fd0;
+  --color-accent-100: #2b2741;
+  --color-accent-200: #423a6a;
+  --color-accent-300: #5d5294;
+  --color-accent-400: #6a5fd0;
+  --color-accent-500: #6a5fd0;
+  --color-accent-600: #796cbf;
+  --color-accent-700: #968ae0;
+  --color-accent-800: #d6d2fa;
+  --color-accent-900: #e9e7fd;
+
+  /* inverted neutral ramp: 100 = strongest text, 800/900 = borders/surfaces */
+  --color-neutral-100: #191c28;
+  --color-neutral-200: #2e3245;
+  --color-neutral-300: #4a4f65;
+  --color-neutral-400: #62667c;
+  --color-neutral-500: #75798e;
+  --color-neutral-600: #9397ab;
+  --color-neutral-700: #b9bdd0;
+  --color-neutral-800: #d9dce8;
+  --color-neutral-900: #eceef5;
+
+  --shadow-sm: 0 0 0 1px #d9dce8;
+  --shadow-md: 0 0 0 1px #d9dce8, 0 6px 18px rgba(23, 25, 38, 0.1);
+  --shadow-lg: 0 0 0 1px #c9cede, 0 16px 40px rgba(23, 25, 38, 0.14);
+
+  --viz-bg: #e9ebf3;
 }
 
 *,

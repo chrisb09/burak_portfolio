@@ -17,31 +17,51 @@
   };
 
   // site palette: dark navy background, neon-green roads, pink buildings
-  const BG = '#0f1118';
-  const WATER = '#141b2c';
-  const PARK = '#131a16';
-  const ROAD = '#39ff8f';
-  const ROAD_CASING = '#0a3a22';
-  const BUILDING = '#ff8fd1';
+  // light theme uses a pale surface with darker green roads for contrast
+  const PALETTES = {
+    dark: {
+      BG: '#0f1118',
+      WATER: '#141b2c',
+      PARK: '#131a16',
+      ROAD: '#39ff8f',
+      ROAD_CASING: '#0a3a22',
+      BUILDING: '#ff8fd1',
+      VIG: 'radial-gradient(ellipse 92% 92% at 50% 45%, transparent 45%, rgba(15,17,24,0.5) 100%)',
+    },
+    light: {
+      BG: '#e9ebf3',
+      WATER: '#cfddf2',
+      PARK: '#d7e9dc',
+      ROAD: '#0b9b52',
+      ROAD_CASING: '#bfe3cf',
+      BUILDING: '#c65b9d',
+      VIG: 'radial-gradient(ellipse 92% 92% at 50% 45%, transparent 55%, rgba(23,25,38,0.18) 100%)',
+    },
+  };
 
-  function colorStyle(style) {
+  function themeName() {
+    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  function colorStyle(style, theme) {
+    const P = PALETTES[theme || themeName()] || PALETTES.dark;
     const s = JSON.parse(JSON.stringify(style));
     for (const l of s.layers) {
       if (l.type === 'symbol') { l.layout = l.layout || {}; l.layout.visibility = 'none'; continue; }
-      if (l.id === 'background') l.paint['background-color'] = BG;
-      else if (l.id === 'water') l.paint['fill-color'] = WATER;
-      else if (/^park|landcover|landuse/.test(l.id) && l.paint && l.paint['fill-color']) l.paint['fill-color'] = PARK;
+      if (l.id === 'background') l.paint['background-color'] = P.BG;
+      else if (l.id === 'water') l.paint['fill-color'] = P.WATER;
+      else if (/^park|landcover|landuse/.test(l.id) && l.paint && l.paint['fill-color']) l.paint['fill-color'] = P.PARK;
       else if (l.id === 'building') {
-        l.paint['fill-color'] = BUILDING;
+        l.paint['fill-color'] = P.BUILDING;
         l.paint['fill-opacity'] = 0.55;
         delete l.paint['fill-outline-color'];
         l.maxzoom = 24; // this layer is designed to hand off to building-3d above z14 — keep it flat instead
       } else if (l.id === 'building-3d') {
         l.layout = l.layout || {}; l.layout.visibility = 'none';
       } else if (/^road_(motorway|trunk_primary|secondary_tertiary|minor|link|motorway_link|service_track|path_pedestrian)$/.test(l.id) && l.paint && l.paint['line-color']) {
-        l.paint['line-color'] = ROAD;
+        l.paint['line-color'] = P.ROAD;
       } else if (/casing/.test(l.id) && l.paint && l.paint['line-color']) {
-        l.paint['line-color'] = ROAD_CASING;
+        l.paint['line-color'] = P.ROAD_CASING;
       } else if (/label|place|poi|boundary|admin/i.test(l.id)) {
         l.layout = l.layout || {}; l.layout.visibility = 'none';
       }
@@ -49,7 +69,7 @@
     return s;
   }
 
-  let cssPromise, jsPromise, stylePromise;
+  let cssPromise, jsPromise, stylePromise, rawStylePromise;
   const loadCss = () => cssPromise || (cssPromise = new Promise((res) => {
     if (document.querySelector('link[data-maplibre]')) return res();
     const l = document.createElement('link');
@@ -65,7 +85,12 @@
     s.onload = () => res(window.maplibregl); s.onerror = rej;
     document.head.appendChild(s);
   }));
-  const loadStyle = () => stylePromise || (stylePromise = fetch(STYLE_URL).then(r => r.json()).then(colorStyle));
+  const loadRawStyle = () => rawStylePromise || (rawStylePromise = fetch(STYLE_URL).then(r => r.json()));
+  const loadStyle = () => stylePromise || (stylePromise = loadRawStyle().then(raw => {
+    // cache raw for later theme switches; color with current theme at boot
+    try { document.querySelectorAll('scenario-map').forEach(el => { el._rawStyle = raw; }); } catch (e) {}
+    return colorStyle(raw, themeName());
+  }));
 
   class ScenarioMap extends HTMLElement {
     static get observedAttributes() { return ['scenario']; }
@@ -74,9 +99,10 @@
       if (this._built) return;
       this._built = true;
       this._lang = this._lang || 'de';
+      this._theme = themeName();
       this.style.display = 'block';
       if (getComputedStyle(this).position === 'static') this.style.position = 'relative';
-      this.style.background = BG;
+      this.style.background = PALETTES[this._theme].BG;
       this.style.overflow = 'hidden';
 
       this._host = document.createElement('div');
@@ -86,7 +112,7 @@
       this._vig = document.createElement('div');
       Object.assign(this._vig.style, {
         position: 'absolute', inset: '0', pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 92% 92% at 50% 45%, transparent 45%, rgba(15,17,24,0.5) 100%)'
+        background: PALETTES[this._theme].VIG
       });
       this.appendChild(this._vig);
 
@@ -100,7 +126,8 @@
       this.appendChild(this._status);
 
       loadCss();
-      Promise.all([loadJs(), loadStyle()]).then(([maplibregl, style]) => {
+      Promise.all([loadJs(), loadStyle(), loadRawStyle()]).then(([maplibregl, style, raw]) => {
+        this._rawStyle = raw;
         const v = VIEWS[this.getAttribute('scenario')] || VIEWS.Melaten;
         this._map = new maplibregl.Map({
           container: this._host,
@@ -142,6 +169,22 @@
     }
 
     disconnectedCallback() { if (this._ro) this._ro.disconnect(); }
+
+    setTheme(theme) {
+      this._theme = theme;
+      const P = PALETTES[theme] || PALETTES.dark;
+      this.style.background = P.BG;
+      if (this._vig) this._vig.style.background = P.VIG;
+      if (this._map && this._rawStyle) {
+        this._map.setStyle(colorStyle(this._rawStyle, theme));
+      } else if (this._map) {
+        // style not cached (older boot); reload and recolor
+        fetch(STYLE_URL).then(r => r.json()).then(raw => {
+          this._rawStyle = raw;
+          this._map.setStyle(colorStyle(raw, theme));
+        }).catch(() => {});
+      }
+    }
 
     setLang(lang) {
       this._lang = lang;

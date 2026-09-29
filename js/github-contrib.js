@@ -51,10 +51,18 @@ class GithubContrib extends HTMLElement {
     legend.style.cssText = 'display:flex; align-items:center; gap:4px;';
     foot.append(status, legend);
 
-    const shades = [
+    const theme = (document.documentElement.getAttribute('data-theme') === 'light') ? 'light' : 'dark';
+    this._theme = theme;
+    const shadesFor = (t) => t === 'light' ? [
+      'color-mix(in oklab, var(--color-neutral-700) 60%, transparent)',
+      'rgba(11,155,82,0.22)', 'rgba(11,155,82,0.42)', 'rgba(11,155,82,0.68)', 'rgba(11,155,82,0.95)'
+    ] : [
       'color-mix(in oklab, var(--color-neutral-700) 60%, transparent)',
       'rgba(57,255,143,0.22)', 'rgba(57,255,143,0.42)', 'rgba(57,255,143,0.68)', 'rgba(57,255,143,0.95)'
     ];
+    const shades = shadesFor(theme);
+    this._shadesFor = shadesFor;
+    this._shades = shades;
     const swatch = (lvl) => {
       const s = document.createElement('span');
       s.style.cssText = 'width:11px; height:11px; border-radius:2px; display:block; background:' + shades[lvl] + ';';
@@ -73,7 +81,7 @@ class GithubContrib extends HTMLElement {
 
     const cellFor = (level, label) => {
       const c = document.createElement('div');
-      c.style.cssText = 'width:11px; height:11px; border-radius:2px; background:' + shades[level] + ';';
+      c.style.cssText = 'width:11px; height:11px; border-radius:2px; background:' + this._shades[level] + ';';
       if (label) c.title = label;
       return c;
     };
@@ -165,6 +173,32 @@ class GithubContrib extends HTMLElement {
       total.toLocaleString('de-DE') + ' Beiträge im letzten Jahr',
       total.toLocaleString('en-US') + ' contributions in the last year'
     );
+  }
+
+  setTheme(theme) {
+    this._theme = theme;
+    if (this._shadesFor) this._shades = this._shadesFor(theme);
+    if (!this._els) return;
+    // re-render swatches + grid with new shades
+    const { grid } = this._els;
+    if (this._contribDays) {
+      this._renderContrib();
+    } else if (grid) {
+      Array.from(grid.children).forEach((c) => {
+        c.style.background = this._shades[0];
+      });
+    }
+    const legend = this.querySelectorAll('span');
+    // legend swatches are spans with inline background; rebuild via parent
+    const legendBox = this._els && this._els.status ? this._els.status.parentElement : null;
+    if (legendBox) {
+      const sw = legendBox.querySelectorAll('span[style*="width:11px"]');
+      // first 5 swatches correspond to levels 0..4 (less/more are text spans)
+      let idx = 0;
+      sw.forEach((s) => {
+        if (idx < 5) s.style.background = this._shades[idx++];
+      });
+    }
   }
 
   setLang(lang) {

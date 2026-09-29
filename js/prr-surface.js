@@ -146,6 +146,18 @@
       if (this._axZ) this._axZ.textContent = en ? 'Transmission interval [s]' : 'Sendeintervall [s]';
     }
 
+    setTheme(theme) {
+      this._theme = theme;
+      if (this._mats) {
+        const light = theme === 'light';
+        this._mats.faint.color.set(light ? 0xb9bdd0 : 0x3f424d);
+        this._mats.fainter.color.set(light ? 0xd9dce8 : 0x3f424d);
+        this._mats.mesh.color.set(light ? 0xffffff : 0x0d1014);
+        if (this._mats.hi) this._mats.hi.set(light ? '#0b9b52' : '#39ff8f');
+        if (this._refreshColors) this._refreshColors();
+      }
+    }
+
     async _boot() {
       const [THREE, { OrbitControls }] = await Promise.all([import(THREE_URL), import(ORBIT_URL)]);
       const load = this.shadowRoot.querySelector('.load');
@@ -211,15 +223,16 @@
       const lgeo = new THREE.BufferGeometry();
       lgeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       lgeo.setIndex(lineIdx);
+      const isLight = (this._theme || document.documentElement.getAttribute('data-theme')) === 'light';
       const mesh = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({
-        color: 0x0d1014, transparent: true, opacity: 0.4
+        color: isLight ? 0xffffff : 0x0d1014, transparent: true, opacity: 0.4
       }));
       mesh.renderOrder = 2;
       scene.add(mesh);
 
       // --- frame: floor grid + back walls ----------------------------------
-      const faint = new THREE.LineBasicMaterial({ color: 0x3f424d, transparent: true, opacity: 0.45, depthWrite: false });
-      const fainter = new THREE.LineBasicMaterial({ color: 0x3f424d, transparent: true, opacity: 0.22, depthWrite: false });
+      const faint = new THREE.LineBasicMaterial({ color: isLight ? 0xb9bdd0 : 0x3f424d, transparent: true, opacity: 0.45, depthWrite: false });
+      const fainter = new THREE.LineBasicMaterial({ color: isLight ? 0xd9dce8 : 0x3f424d, transparent: true, opacity: 0.22, depthWrite: false });
       const seg = (a, b, m) => scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), m));
       const V = (x, y, z) => new THREE.Vector3(x, y, z);
       for (let i = 0; i < NX; i++) seg(V(px(i), 0, Z0), V(px(i), 0, Z0 + D), i === 0 ? faint : fainter);
@@ -242,7 +255,8 @@
       this._axZ = axZ;
 
       // --- values ----------------------------------------------------------
-      const lo = new THREE.Color('#9184d9'), mid = new THREE.Color('#5fc8b0'), hi = new THREE.Color('#39ff8f');
+      const lo = new THREE.Color('#9184d9'), mid = new THREE.Color('#5fc8b0'), hi = new THREE.Color(isLight ? '#0b9b52' : '#39ff8f');
+      this._mats = { faint, fainter, mesh: mesh.material, hi };
       const cur = new Float32Array(NX * NZ);
       const target = new Float32Array(NX * NZ);
       let scen = this.getAttribute('scenario') || 'Melaten';
@@ -276,6 +290,7 @@
         geo.computeVertexNormals();
       };
       writeVerts();
+      this._refreshColors = writeVerts;
 
       // --- hover -----------------------------------------------------------
       const ray = new THREE.Raycaster();

@@ -198,6 +198,20 @@
       this._applyLang();
     }
 
+    setTheme(theme) {
+      this._theme = theme;
+      // Shadow-DOM labels/chips use CSS vars and flip automatically.
+      // Three.js materials use the parsed palette — refresh from computed vars.
+      try {
+        Object.assign(PALETTE, palette());
+        if (this._mats) {
+          if (this._mats.grid) this._mats.grid.color.set(PALETTE.grid);
+          if (this._mats.edge) this._mats.edge.color.set(PALETTE.body);
+          if (this._mats.shell) this._mats.shell.color.set(PALETTE.shell);
+        }
+      } catch (e) {}
+    }
+
     _applyLang() {
       const root = this.shadowRoot;
       if (!root) return;
@@ -248,6 +262,8 @@
       grid.material.opacity = 0.13;
       grid.material.depthWrite = false;
       scene.add(grid);
+      this._mats = this._mats || {};
+      this._mats.grid = grid.material;
 
       const groups = {};
       LAYERS.forEach(l => {
@@ -301,6 +317,8 @@
           color: PALETTE.shell, transparent: true, opacity: 0.66,
           polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
         });
+        this._mats.edge = edgeMat;
+        this._mats.shell = shellMat;
         model.updateMatrixWorld(true);
         model.traverse(o => {
           if (!o.isMesh || !o.geometry) return;
