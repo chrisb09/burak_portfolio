@@ -79,6 +79,9 @@
         localStorage.setItem("bk-lang", lang);
       } catch (e) {}
     }
+    // Button feedback + text swap stay synchronous so the click feels
+    // instant; the heavy custom-element updates (map restyle, heatmap
+    // rebuild) are deferred a frame so they can't block the paint.
     langButtons.forEach((btn) => {
       btn.setAttribute("data-active", String(btn.dataset.langBtn === lang));
     });
@@ -96,8 +99,10 @@
     ariaNodes.forEach((el) => {
       el.setAttribute("aria-label", en ? el.dataset.enAriaLabel : el.dataset.deAriaLabel);
     });
-    translatableElements.forEach((el) => {
-      if (typeof el.setLang === "function") el.setLang(lang);
+    requestAnimationFrame(() => {
+      translatableElements.forEach((el) => {
+        if (typeof el.setLang === "function") el.setLang(lang);
+      });
     });
   }
 
@@ -136,10 +141,14 @@
         localStorage.setItem(THEME_KEY, theme);
       } catch (e) {}
     }
-    translatableElements.forEach((el) => {
-      if (typeof el.setTheme === "function") el.setTheme(theme);
+    // Defer for the same reason as setLang: the map restyle alone can
+    // take a few hundred ms, and it must not block the toggle's paint.
+    requestAnimationFrame(() => {
+      translatableElements.forEach((el) => {
+        if (typeof el.setTheme === "function") el.setTheme(theme);
+      });
+      window.dispatchEvent(new CustomEvent("themechange", { detail: { theme } }));
     });
-    window.dispatchEvent(new CustomEvent("themechange", { detail: { theme } }));
   }
   function initTheme() {
     const stored = getStoredTheme();

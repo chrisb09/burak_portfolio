@@ -69,7 +69,7 @@
     return s;
   }
 
-  let cssPromise, jsPromise, stylePromise, rawStylePromise;
+  let cssPromise, jsPromise, rawStylePromise;
   const loadCss = () => cssPromise || (cssPromise = new Promise((res) => {
     if (document.querySelector('link[data-maplibre]')) return res();
     const l = document.createElement('link');
@@ -85,12 +85,10 @@
     s.onload = () => res(window.maplibregl); s.onerror = rej;
     document.head.appendChild(s);
   }));
+  // Only the raw tileset JSON is cached. The themed copy is derived fresh
+  // on every use, so a theme toggle racing the initial load can't leave
+  // the map stuck in the previous theme.
   const loadRawStyle = () => rawStylePromise || (rawStylePromise = fetch(STYLE_URL).then(r => r.json()));
-  const loadStyle = () => stylePromise || (stylePromise = loadRawStyle().then(raw => {
-    // cache raw for later theme switches; color with current theme at boot
-    try { document.querySelectorAll('scenario-map').forEach(el => { el._rawStyle = raw; }); } catch (e) {}
-    return colorStyle(raw, themeName());
-  }));
 
   class ScenarioMap extends HTMLElement {
     static get observedAttributes() { return ['scenario']; }
@@ -126,12 +124,16 @@
       this.appendChild(this._status);
 
       loadCss();
-      Promise.all([loadJs(), loadStyle(), loadRawStyle()]).then(([maplibregl, style, raw]) => {
+      Promise.all([loadJs(), loadRawStyle()]).then(([maplibregl, raw]) => {
         this._rawStyle = raw;
+        const theme = themeName();
+        this._theme = theme;
+        this.style.background = PALETTES[theme].BG;
+        if (this._vig) this._vig.style.background = PALETTES[theme].VIG;
         const v = VIEWS[this.getAttribute('scenario')] || VIEWS.Melaten;
         this._map = new maplibregl.Map({
           container: this._host,
-          style,
+          style: colorStyle(raw, theme),
           center: v.center,
           zoom: v.zoom,
           attributionControl: false,
@@ -145,9 +147,11 @@
         // small, always-collapsed credit line — the built-in attribution
         // control auto-expands on load and covers most of a small card
         const credit = document.createElement('div');
+        this._credit = credit;
+        this._paintCredit(theme);
         Object.assign(credit.style, {
           position: 'absolute', left: '8px', bottom: '4px', font: '9px/1.3 Sora, system-ui, sans-serif',
-          color: 'rgba(255,255,255,0.35)', pointerEvents: 'none', zIndex: 1
+          pointerEvents: 'none', zIndex: 1
         });
         credit.innerHTML = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:inherit; pointer-events:auto;">OpenStreetMap</a> contributors';
         this._host.appendChild(credit);
@@ -170,20 +174,22 @@
 
     disconnectedCallback() { if (this._ro) this._ro.disconnect(); }
 
+    _paintCredit(theme) {
+      if (!this._credit) return;
+      this._credit.style.color = theme === 'light' ? 'rgba(23,25,38,0.45)' : 'rgba(255,255,255,0.35)';
+    }
+
     setTheme(theme) {
       this._theme = theme;
       const P = PALETTES[theme] || PALETTES.dark;
       this.style.background = P.BG;
       if (this._vig) this._vig.style.background = P.VIG;
+      this._paintCredit(theme);
       if (this._map && this._rawStyle) {
         this._map.setStyle(colorStyle(this._rawStyle, theme));
-      } else if (this._map) {
-        // style not cached (older boot); reload and recolor
-        fetch(STYLE_URL).then(r => r.json()).then(raw => {
-          this._rawStyle = raw;
-          this._map.setStyle(colorStyle(raw, theme));
-        }).catch(() => {});
       }
+      // toggled before the map finished loading: boot reads themeName()
+      // fresh at creation time (above), so nothing more to do here.
     }
 
     setLang(lang) {
