@@ -199,7 +199,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  /* frame the face in the 28px square (source is a 3:4 headshot) */
+  object-position: center 28%;
 }
 /* One row on every screen size: the links strip is the flexible part
    (flex:1, min-width:0) and scrolls sideways instead of wrapping once
