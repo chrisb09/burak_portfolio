@@ -430,6 +430,40 @@
 .proj-card:hover {
   transform: translateY(-4px);
 }
+/* -- projekte: label/body rows (Ziel/Goal, Deutung/Interpretation) --
+   Fixed-width labels (52px/72px inline) overflowed for long EN strings
+   like "INTERPRETATION" (uppercase + 0.14em tracking needs ~100px).
+   Flexible basis + wrapping keeps the label in its own column. */
+.proj-meta {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-neutral-800);
+}
+.proj-label {
+  color: var(--color-accent-300);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  flex: 0 0 80px;
+  min-width: 0;
+  max-width: 120px;
+  padding-top: 2px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+.proj-body {
+  color: var(--color-neutral-200);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 62ch;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-wrap: pretty;
+}
 .thesis-media {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
