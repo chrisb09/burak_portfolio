@@ -162,6 +162,15 @@
           .load .sp { width:12px; height:12px; border-radius:50%; flex-shrink:0;
                       border:1.5px solid color-mix(in oklab, #39ff8f 28%, transparent);
                       border-top-color:#39ff8f; animation:spin 0.85s linear infinite; }
+          /* live fps readout, top-left — capped at 30fps on purpose so the
+             animation stays smooth enough while leaving GPU headroom for
+             the rest of the page */
+          .fps { position:absolute; top:13px; left:15px; padding:4px 10px; border-radius:999px;
+                 border:1px solid var(--color-neutral-800, #3f424d);
+                 background:color-mix(in oklab, var(--color-bg, #161826) 76%, transparent);
+                 backdrop-filter:blur(6px); font-family:Sora,system-ui,sans-serif; font-size:9.5px;
+                 letter-spacing:0.12em; font-variant-numeric:tabular-nums; pointer-events:none;
+                 color:var(--color-neutral-400, #b2b6ca); }
           @keyframes spin { to { transform:rotate(360deg); } }
           .miss strong { color:var(--color-neutral-400, #b2b6ca); font-weight:500; font-size:13px; letter-spacing:0.02em; }
           .miss code { color:var(--color-accent, #9184d9); font-size:11.5px; }
@@ -181,6 +190,7 @@
         <div class="wrap">
           <div class="labels"></div>
           <div class="hint"><span data-s="hintDrag">Ziehen zum <em>Drehen</em></span><span data-s="hintScroll">Scrollen zum <em>Zoomen</em></span></div>
+          <div class="fps" aria-hidden="true">– fps</div>
           <div class="note"><span class="row"><b>!</b><i data-s="noteTitle">Beispielhafte Darstellung</i></span><s data-s="noteSub">Keine reale Vernetzung oder Steuergeräte</s></div>
           <div class="load"><span class="sp"></span><span data-s="loading">Modell wird geladen</span></div>
           <div class="chips"></div>
@@ -191,6 +201,7 @@
     disconnectedCallback() {
       cancelAnimationFrame(this._raf);
       this._ro && this._ro.disconnect();
+      this._io && this._io.disconnect();
     }
 
     setLang(lang) {
@@ -515,9 +526,30 @@
       resize();
 
       const t0 = performance.now();
-      const tick = () => {
+      const fpsEl = this.shadowRoot.querySelector('.fps');
+      // Cap at ~30fps: fluid enough for an ambient animation, halves GPU
+      // work vs. uncapped rAF so the rest of the page never stutters.
+      const FRAME_MS = 1000 / 30;
+      let lastFrame = 0, fpsFrames = 0, fpsTime = t0;
+      // Pause entirely while off-screen (other view active) or tab hidden.
+      this._visible = true;
+      this._io = new IntersectionObserver((es) => {
+        this._visible = es[0].isIntersecting;
+      }, { threshold: 0 });
+      this._io.observe(this);
+      const tick = (now) => {
         this._raf = requestAnimationFrame(tick);
-        const t = (performance.now() - t0) / 1000;
+        if (!this._visible || document.hidden) return;
+        const elapsed = now - lastFrame;
+        if (elapsed < FRAME_MS) return;
+        lastFrame = now - (elapsed % FRAME_MS);
+        fpsFrames++;
+        if (now - fpsTime >= 500) {
+          if (fpsEl) fpsEl.textContent = Math.round((fpsFrames * 1000) / (now - fpsTime)) + ' fps';
+          fpsFrames = 0;
+          fpsTime = now;
+        }
+        const t = (now - t0) / 1000;
         controls.update();
 
         pulses.forEach(p => {
@@ -572,7 +604,7 @@
 
         renderer.render(scene, camera);
       };
-      tick();
+      tick(performance.now());
     }
   }
 
