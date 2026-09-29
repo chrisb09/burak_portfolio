@@ -184,26 +184,22 @@
 .nav-avatar {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: 8px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   box-sizing: border-box;
+  overflow: hidden;
   text-decoration: none;
   background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in oklab, #39ff8f 80%, transparent),
     0 0 10px 1px color-mix(in oklab, #39ff8f 35%, transparent);
 }
-.nav-avatar span {
-  display: flex;
-  align-items: baseline;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: -0.045em;
-  line-height: 1;
-  color: #39ff8f;
+.nav-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
 }
 /* One row on every screen size: the links strip is the flexible part
    (flex:1, min-width:0) and scrolls sideways instead of wrapping once
@@ -333,8 +329,8 @@
   color: var(--color-bg);
   background: var(--color-text);
 }
-/* icon-only, same circular treatment (and the same constant neon glow)
-   as the BK avatar, so the two read as one consistent design language */
+/* icon-only, same neon-glow treatment as the portrait avatar,
+   so the nav icons read as one consistent design language */
 .nav-gh {
   width: 30px;
   height: 30px;
