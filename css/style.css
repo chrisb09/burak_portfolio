@@ -189,10 +189,20 @@
   display: block;
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
   text-decoration: none;
   background: color-mix(in oklab, var(--color-neutral-900) 88%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, #39ff8f 80%, transparent),
-    0 0 10px 1px color-mix(in oklab, #39ff8f 35%, transparent);
+  box-shadow: 0 0 10px 1px color-mix(in oklab, #39ff8f 35%, transparent);
+}
+/* neon ring as an overlay: an inset box-shadow paints below the photo,
+   so it was hidden behind opaque pixels — ::after sits above the img */
+.nav-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid color-mix(in oklab, #39ff8f 80%, transparent);
+  pointer-events: none;
 }
 .nav-avatar img {
   display: block;
